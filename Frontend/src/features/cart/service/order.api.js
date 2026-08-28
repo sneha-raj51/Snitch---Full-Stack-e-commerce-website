@@ -1,7 +1,8 @@
 import axios from 'axios'
+import { API_BASE_URL } from "../../../config/api";
 
 const orderApiInstance = axios.create({
-    baseURL: '/api/orders',
+    baseURL: `${API_BASE_URL}/api/orders`,
     withCredentials: true
 })
 

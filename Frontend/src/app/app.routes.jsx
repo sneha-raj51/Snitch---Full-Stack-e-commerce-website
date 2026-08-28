@@ -9,7 +9,7 @@ import Home from "../features/products/pages/Home";
 import ProductDetail from "../features/products/pages/ProductDetail";
 import SellerProductDetails from "../features/products/pages/SellerProductDetails";
 import Cart from "../features/cart/pages/Cart";
-import AppLayout from "./Applayout";
+import AppLayout from "./AppLayout";
 import OrderSuccess from "../features/cart/pages/OrderSuccess";
 import Wishlist from "../features/products/pages/Wishlist";
 import Profile from "../features/auth/pages/Profile";
