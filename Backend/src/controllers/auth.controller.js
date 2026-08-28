@@ -11,7 +11,13 @@ async function sendTokenResponse(user, res, message) {
         expiresIn: "7d"
     })
 
-    res.cookie("token", token)
+    const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    };
+
+    res.cookie("token", token, cookieOptions)
 
     res.status(200).json({
         message,
@@ -102,9 +108,15 @@ export const googleCallback = async (req, res) => {
         expiresIn: "7d"
     })
 
-    res.cookie("token", token)
+    const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    };
 
-    res.redirect("http://localhost:5173/")
+    res.cookie("token", token, cookieOptions)
+
+    res.redirect(process.env.FRONTEND_URL || "http://localhost:5173/")
 }
 
 export const getMe = async (req, res) => {
@@ -168,6 +180,11 @@ export const updateProfile = async (req, res) => {
 }
 
 export const logout = async (_req, res) => {
-    res.clearCookie('token');
+    const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    };
+    res.clearCookie('token', cookieOptions);
     return res.status(200).json({ message: 'Logged out successfully', success: true });
 } 
