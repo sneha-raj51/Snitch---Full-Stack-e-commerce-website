@@ -1,0 +1,59 @@
+import express from 'express';
+import { authenticateUser } from '../middlewares/auth.middleware.js';
+import { validateAddToCart, validateIncrementCartItemQuantity } from '../validator/cart.validator.js';
+import { addToCart, createOrderController, getCart, incrementCartItemQuantity, decrementCartItemQuantity, removeCartItem, verifyOrderController } from '../controllers/cart.controller.js';
+
+
+const router = express.Router();
+
+
+/**
+ * @route POST /api/cart/add/:productId/:variantId?
+ * @desc Add item to cart
+ * @access Private
+ * @argument productId - ID of the product to add
+ * @argument variantId - ID of the variant to add (optional)
+ * @argument quantity - Quantity of the item to add (optional, default: 1)
+ */
+router.post("/add/:productId", authenticateUser, validateAddToCart, addToCart)
+router.post("/add/:productId/:variantId", authenticateUser, validateAddToCart, addToCart)
+
+
+
+/**
+ * @route GET /api/cart
+ * @desc Get user's cart
+ * @access Private
+ */
+router.get('/', authenticateUser, getCart)
+
+
+/**
+ * @route PATCH /api/cart/quantity/increment/:productId/:variantId?
+ * @desc Increment item quantity in cart by one
+ * @access Private
+ * @argument productId - ID of the product to update
+ * @argument variantId - ID of the variant to update (optional)
+ */
+router.patch("/quantity/increment/:productId/:variantId", authenticateUser, validateIncrementCartItemQuantity, incrementCartItemQuantity)
+router.patch("/quantity/increment/:productId", authenticateUser, validateIncrementCartItemQuantity, incrementCartItemQuantity)
+router.patch("/quantity/decrement/:productId/:variantId", authenticateUser, validateIncrementCartItemQuantity, decrementCartItemQuantity)
+router.patch("/quantity/decrement/:productId", authenticateUser, validateIncrementCartItemQuantity, decrementCartItemQuantity)
+router.delete("/quantity/remove/:productId/:variantId", authenticateUser, validateIncrementCartItemQuantity, removeCartItem)
+router.delete("/quantity/remove/:productId", authenticateUser, validateIncrementCartItemQuantity, removeCartItem)
+
+
+/**
+ * @route POST /api/cart/payment/create/order
+ */
+router.post("/payment/create/order", authenticateUser, createOrderController)
+
+router.post("/payment/verify/order", authenticateUser, verifyOrderController)
+
+router.get("/payment/config", authenticateUser, (req, res) => {
+    res.status(200).json({ 
+        razorpayKeyId: process.env.RAZORPAY_KEY_ID 
+    });
+})
+
+export default router;
