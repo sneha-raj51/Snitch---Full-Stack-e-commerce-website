@@ -13,6 +13,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import { config } from "./config/config.js";
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(morgan("dev"));
 app.use(express.json());
