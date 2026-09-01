@@ -22,10 +22,16 @@ export const useAuth = () => {
     }
 
     async function handleLogin({ email, password }) {
-
-        const data = await login({ email, password })
-        dispatch(setUser(data.user))
-        return data.user
+        try {
+            const data = await login({ email, password })
+            dispatch(setUser(data.user))
+            dispatch(setError(null))
+            return { success: true, user: data.user }
+        } catch (error) {
+            const message = error?.response?.data?.message || error?.response?.data?.errors?.map(e => e.msg).join(', ') || error.message || 'Login failed'
+            dispatch(setError(message))
+            return { success: false, error: message }
+        }
     }
 
     async function handleLogout() {

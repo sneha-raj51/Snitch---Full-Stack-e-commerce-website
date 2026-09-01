@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from "../hook/useAuth";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import ContinueWithGoogle from '../components/ContinueWithGoogle';
 
 const Login = () => {
@@ -11,6 +11,7 @@ const Login = () => {
         email: '',
         password: ''
     });
+    const [formError, setFormError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -19,15 +20,21 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError(null);
         try {
-            const user = await handleLogin({ email: formData.email, password: formData.password });
-            if (user.role == "buyer") {
-                navigate("/");
-            } else if (user.role == "seller") {
-                navigate("/seller/listings");
+            const result = await handleLogin({ email: formData.email, password: formData.password });
+            if (result.success) {
+                if (result.user.role == "buyer") {
+                    navigate("/");
+                } else if (result.user.role == "seller") {
+                    navigate("/seller/listings");
+                }
+            } else {
+                setFormError(result.error);
             }
         } catch (error) {
             console.error("Login failed", error);
+            setFormError("An unexpected error occurred");
         }
     };
 
@@ -115,6 +122,11 @@ const Login = () => {
 
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+                            {formError && (
+                                <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+                                    {formError}
+                                </div>
+                            )}
 
                             {/* Email */}
                             <div className="flex flex-col gap-2">
@@ -217,15 +229,15 @@ const Login = () => {
                             {/* Footer Link */}
                             <p className="text-center text-[11px]" style={{ color: '#B5ADA3' }}>
                                 Don&apos;t have an account?{' '}
-                                <a
-                                    href="/register"
+                                <Link
+                                    to="/register"
                                     className="transition-colors duration-200"
                                     style={{ color: '#7A6E63', textDecoration: 'underline', textUnderlineOffset: '3px' }}
                                     onMouseEnter={e => e.target.style.color = '#C9A96E'}
                                     onMouseLeave={e => e.target.style.color = '#7A6E63'}
                                 >
                                     Sign up
-                                </a>
+                                </Link>
                             </p>
                         </form>
                     </div>

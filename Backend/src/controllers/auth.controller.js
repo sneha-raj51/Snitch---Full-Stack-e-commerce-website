@@ -38,11 +38,13 @@ export const register = async (req, res) => {
     const { email, contact, password, fullname, isSeller } = req.body;
 
     try {
+        const orConditions = [{ email }];
+        if (contact) {
+            orConditions.push({ contact });
+        }
+
         const existingUser = await userModel.findOne({
-            $or: [
-                { email },
-                { contact }
-            ]
+            $or: orConditions
         })
 
         if (existingUser) {
